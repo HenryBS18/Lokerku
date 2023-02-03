@@ -1,13 +1,22 @@
 package com.example.lokerku;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class RequestActivity extends AppCompatActivity {
 
@@ -23,16 +32,32 @@ public class RequestActivity extends AppCompatActivity {
         TextView userName = findViewById(R.id.userName);
         Button requestButton = findViewById(R.id.requestButton);
 
+        // Get Intent Extra
+        String name = getIntent().getStringExtra("name");
 
-        String name = getIntent().getStringExtra("names_key");
-
+        // Set User Name
         userName.setText("Hi, " + name);
 
+        // Request Button
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(RequestActivity.this, MainActivity.class);
-                startActivity(intent);
+
+                // Alert Dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(RequestActivity.this);
+                builder.setPositiveButton("Request", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(RequestActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).setMessage("Apakah yakin ingin Request?");
+                builder.show();
             }
         });
     }
