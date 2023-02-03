@@ -1,5 +1,6 @@
 package com.example.lokerku;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -10,7 +11,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class LoginActivity extends AppCompatActivity {
+    private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,64 +35,70 @@ public class LoginActivity extends AppCompatActivity {
         // Declare
         EditText email = findViewById(R.id.email);
         EditText password = findViewById(R.id.password);
-        Button loginButton = findViewById(R.id.loginButton);
+        Button loginButton = findViewById(R.id.tombolLogin);
         Button registerButton = findViewById(R.id.registerButton);
 
-        String names = getIntent().getStringExtra("name_key");
-        String emails = getIntent().getStringExtra("email_key");
-        String passwords = getIntent().getStringExtra("password_key");
-        String increment = getIntent().getStringExtra("increment_key");
-
-        int i;
-
-        if (increment != null) {
-            i = Integer.valueOf(increment);
-        }
-        else {
-            i = 0;
-        }
-
-        String[] data_name = new String[10];
-        String[] data_email = new String[10];
-        String[] data_password = new String[10];
-
-        data_name[i] = names;
-        data_email[i] = emails;
-        data_password[i] = passwords;
-
-        System.out.println("i : " + i);
-        System.out.println("name : " + names);
-        System.out.println("email : " + emails);
-        System.out.println("password : " + passwords);
-
+        // Login Button
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                System.out.println("email : " + email);
-                System.out.println("password : " + password);
+                // Get Data From Firebase
+                database.child("user_data").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if ((email.getText().toString().equals("hbintang@student.ciputra.ac.id")) && (password.getText().toString().equals("12345"))) {
-                    Intent intent = new Intent(LoginActivity.this, RequestActivity.class);
-                    startActivity(intent);
-                }
-//                else {
-//                    Toast.makeText(getApplicationContext(), "Email/Password salah", Toast.LENGTH_SHORT).show();
-//                }
+                        // Get email & password text
+                        String getEmail = email.getText().toString();
+                        String getPassword = password.getText().toString();
 
-                for (int i = 0; i < data_email.length; i++) {
-                    if (email.getText().toString().equals(data_email[i])) {
-                        if (password.getText().toString().equals(data_password[i])) {
-                            Intent intent = new Intent(LoginActivity.this, RequestActivity.class);
+                        try {
+                            // Hash the Password
+                            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                            byte[] hash = digest.digest(getPassword.getBytes("UTF-8"));
+                            StringBuilder hashedPassword = new StringBuilder();
 
-                            intent.putExtra("names_key", data_name[i]);
-                            startActivity(intent);
+                            for (byte b : hash) {
+                                String hex = Integer.toHexString(0xff & b);
+                                if (hex.length() == 1)
+                                    hashedPassword.append('0');
+                                hashedPassword.append(hex);
+                            }
+
+                            // Get Data from Firebase
+                            for (DataSnapshot item : snapshot.getChildren()) {
+                                ModelRegister modelRegister = item.getValue(ModelRegister.class);
+
+                                if (getEmail.isEmpty()) {
+                                    email.setError("Masukkan Email!");
+                                }
+                                else if (getPassword.isEmpty()) {
+                                    password.setError("Masukkan Password");
+                                }
+
+                                else if (getEmail.equals(modelRegister.getEmail()) && hashedPassword.toString().equals(modelRegister.getPassword())) {
+                                    String name = modelRegister.getName();
+
+                                    Intent intent = new Intent(LoginActivity.this, RequestActivity.class);
+
+                                    intent.putExtra("name", name);
+                                    startActivity(intent);
+                                }
+                            }
+                        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+                            System.err.println("Error: " + e.getMessage());
                         }
                     }
-                }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
 
+        // Register Button for Switch to Register Page
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
