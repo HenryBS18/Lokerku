@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         statusNumber = findViewById(R.id.statusNumber);
         lockerNumber = findViewById(R.id.lockerNumber);
         currentDate = findViewById(R.id.CurrentDate);
-        statusText = findViewById(R.id.statusText);
+        statusText = findViewById(R.id.statusText); //nanti dirubah jadi gambar
         button = findViewById(R.id.button);
         stopwatch = findViewById(R.id.stopwatch);
 
@@ -79,14 +79,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Set Current Date
         Date currentTime = Calendar.getInstance().getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, DD-MM-YYYY");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd-MM-YYYY");
         String date = dateFormat.format(currentTime);
         currentDate.setText(date);
 
         // Set Last Click
         if (prevStatus == true) {
             statusText.setText("CLOSED");
-            statusText.setTextColor(Color.parseColor("#FFE91E63"));
+            statusText.setTextColor(Color.parseColor("#FF0303"));
             button.setText("UNLOCK");
 
             // Keep Updating The Time
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             statusText.setText("OPEN");
-            statusText.setTextColor(Color.parseColor("#43A047"));
+            statusText.setTextColor(Color.parseColor("#2AFF00"));
             button.setText("LOCK");
         }
 
