@@ -63,16 +63,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userName"
         app:srcCompat="@drawable/logo_mylocker" />
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/menu_item"
-        app:itemTextColor="@drawable/navbar_color"
-        app:itemIconTint="@drawable/navbar_color"
-        android:background="@drawable/rounded_navbar"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
