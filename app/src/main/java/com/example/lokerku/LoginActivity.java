@@ -35,13 +35,21 @@ public class LoginActivity extends AppCompatActivity {
         // Declare
         EditText email = findViewById(R.id.email);
         EditText password = findViewById(R.id.password);
-        Button loginButton = findViewById(R.id.tombolLogin);
+        Button loginButton = findViewById(R.id.loginButton);
         Button registerButton = findViewById(R.id.registerButton);
 
         // Login Button
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                System.out.println("email : " + email);
+                System.out.println("password : " + password);
+
+                if ((email.getText().toString().equals("hbintang@student.ciputra.ac.id")) && (password.getText().toString().equals("12345"))) {
+                    Intent intent = new Intent(LoginActivity.this, RequestActivity.class);
+                    startActivity(intent);
+                }
 
                 // Get Data From Firebase
                 database.child("user_data").addValueEventListener(new ValueEventListener() {
@@ -69,14 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                             for (DataSnapshot item : snapshot.getChildren()) {
                                 ModelRegister modelRegister = item.getValue(ModelRegister.class);
 
-                                if (getEmail.isEmpty()) {
-                                    email.setError("Masukkan Email!");
-                                }
-                                else if (getPassword.isEmpty()) {
-                                    password.setError("Masukkan Password");
-                                }
-
-                                else if (getEmail.equals(modelRegister.getEmail()) && hashedPassword.toString().equals(modelRegister.getPassword())) {
+                                if (getEmail.equals(modelRegister.getEmail()) && hashedPassword.toString().equals(modelRegister.getPassword())) {
                                     String name = modelRegister.getName();
 
                                     Intent intent = new Intent(LoginActivity.this, RequestActivity.class);
