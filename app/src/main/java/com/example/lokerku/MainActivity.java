@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         statusNumber = findViewById(R.id.statusNumber);
         lockerNumber = findViewById(R.id.lockerNumber);
         currentDate = findViewById(R.id.CurrentDate);
-        statusText = findViewById(R.id.statusText);
+        statusText = findViewById(R.id.statusText); //nanti dirubah jadi gambar
         button = findViewById(R.id.button);
         stopwatch = findViewById(R.id.stopwatch);
 
